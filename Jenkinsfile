@@ -9,7 +9,7 @@ node {
     stage('Checkout') {
         // Checkout our application source code
         git url: 'https://github.com/nikhilgoenkatech/easytradeapp.git',
-            branch: 'master'
+            branch: 'main'
 
     }
 
