@@ -1,21 +1,13 @@
-x-logging: &default-logging
-  driver: json-file
-  options:
-    max-file: "5"
-    max-size: "10m"
-
 x-service: &default-service
   restart: always
-  logging: *default-logging
 
 x-aggregator-service: &default-aggregator-service
   <<: *default-service
-  image: ${REGISTRY}/aggregatorservice:${TAG}
+  image: easytrade-aggregatorservice
   depends_on:
     - offerservice
 
 x-aggregator-service-env: &default-aggregator-service-env
-  NODE_ENV: production
   OFFER_SERVICE: offerservice:8080
 
 x-feature-flag-service: &feature-flag-service-env
@@ -31,13 +23,17 @@ x-connection-strings:
 services:
   db:
     <<: *default-service
-    image: ${REGISTRY}/db:${TAG}
+    build: src/db
+    image: db:${BUILD_NUMBER}
+    ports:
+      - 1433:1433
     environment:
       SA_PASSWORD: yourStrong(!)Password
 
   contentcreator:
     <<: *default-service
-    image: ${REGISTRY}/contentcreator:${TAG}
+    build: src/contentcreator
+    image: contentcreator:${BUILD_NUMBER}
     depends_on:
       - db
     environment:
@@ -45,19 +41,25 @@ services:
 
   manager:
     <<: *default-service
-    image: ${REGISTRY}/manager:${TAG}
+    build: src/manager/easyTradeManager
+    image: manager:${BUILD_NUMBER}
     depends_on:
       - db
+    ports:
+      - 8081:80
     environment:
       MSSQL_CONNECTIONSTRING: *dotnet-connection-string
       PROXY_PREFIX: manager
 
   pricing-service:
     <<: *default-service
-    image: ${REGISTRY}/pricing-service:${TAG}
+    build: src/pricing-service
+    image: pricing-service:${BUILD_NUMBER}
     depends_on:
       - db
       - rabbitmq
+    ports:
+      - 8083:8080
     environment:
       MSSQL_CONNECTIONSTRING: *go-connection-string
       RABBITMQ_HOST: rabbitmq
@@ -68,7 +70,10 @@ services:
 
   broker-service:
     <<: *default-service
-    image: ${REGISTRY}/broker-service:${TAG}
+    build: src/broker-service
+    image: broker-service:${BUILD_NUMBER}
+    ports:
+      - 8084:80
     depends_on:
       - db
       - accountservice
@@ -84,36 +89,51 @@ services:
 
   rabbitmq:
     <<: *default-service
-    image: ${REGISTRY}/rabbitmq:${TAG}
+    build: src/rabbitmq
+    image: rabbitmq:${BUILD_NUMBER}
+    ports:
+      - 8082:15672
 
   calculationservice:
     <<: *default-service
-    image: ${REGISTRY}/calculationservice:${TAG}
+    build: src/calculationservice
+    image: calcuationservice:${BUILD_NUMBER}
     depends_on:
       - rabbitmq
 
   frontend:
     <<: *default-service
-    image: ${REGISTRY}/frontend:${TAG}
-    depends_on:
-      - broker-service
-      - loginservice
-      - pricing-service
-      - accountservice
-      - credit-card-order-service
+    build:
+      context: src/frontend
+      dockerfile: Dockerfile.dev
+    # depends_on:
+    #   - broker-service
+    #   - loginservice
+    #   - pricing-service
+    #   - accountservice
+    #   - credit-card-order-service
+    image: frontend:${BUILD_NUMBER}
+    ports:
+      - 8092:3000
+    volumes:
+      - ./src/frontend/src:/app/src:ro
 
   loginservice:
     <<: *default-service
-    image: ${REGISTRY}/loginservice:${TAG}
-    depends_on:
-      - db
+    build: src/loginservice/easyTradeLoginService
+    image: loginservice:${BUILD_NUMBER}
     environment:
       MSSQL_CONNECTIONSTRING: *dotnet-connection-string
       PROXY_PREFIX: loginservice
+    depends_on:
+      - db
+    ports:
+      - 8086:80
 
   frontendreverseproxy:
     <<: *default-service
-    image: ${REGISTRY}/frontendreverseproxy:${TAG}
+    build: src/frontendreverseproxy
+    image: frontendreverseproxy:${BUILD_NUMBER}
     depends_on:
       - broker-service
       - frontend
@@ -130,7 +150,8 @@ services:
 
   loadgen:
     <<: *default-service
-    image: ${REGISTRY}/loadgen:${TAG}
+    build: src/loadgen
+    image: loadgen:${BUILD_NUMBER}
     depends_on:
       - frontendreverseproxy
     environment:
@@ -138,10 +159,14 @@ services:
 
   offerservice:
     <<: *default-service
-    image: ${REGISTRY}/offerservice:${TAG}
+    build: src/offerservice
+    image: offerservice:${BUILD_NUMBER}
     depends_on:
       - loginservice
       - manager
+      - feature-flag-service
+    ports:
+      - 8087:8080
     environment:
       <<: *feature-flag-service-env
       LOGIN_SERVICE_PORT: 80
@@ -149,58 +174,75 @@ services:
       MANAGER_BASE_URL: manager
       MANAGER_PORT: 80
 
-  feature-flag-service:
-    <<: *default-service
-    image: ${REGISTRY}/feature-flag-service:${TAG}
-    environment:
-      PROXY_PREFIX: feature-flag-service
-
   accountservice:
     <<: *default-service
-    image: ${REGISTRY}/accountservice:${TAG}
+    build: src/accountservice
+    image: accountservice:${BUILD_NUMBER}
     depends_on:
       - manager
+    ports:
+      - 8089:8080
     environment:
       MANAGER_HOSTANDPORT: manager:80
       PROXY_PREFIX: accountservice
 
   engine:
     <<: *default-service
-    image: ${REGISTRY}/engine:${TAG}
+    build: src/engine
+    image: engine:${BUILD_NUMBER}
     depends_on:
       - broker-service
+    ports:
+      - 8090:8080
     environment:
       BROKER_HOSTANDPORT: broker-service:80
       PROXY_PREFIX: engine
 
   credit-card-order-service:
     <<: *default-service
-    image: ${REGISTRY}/credit-card-order-service:${TAG}
+    build: src/credit-card-order-service
+    image: credit-card-order-service:${BUILD_NUMBER}
     depends_on:
       - db
       - third-party-service
+    ports:
+      - 8091:8080
     environment:
       PROXY_PREFIX: credit-card-order-service
       MSSQL_CONNECTIONSTRING: *java-connection-string
       THIRD_PARTY_SERVICE_HOSTANDPORT: third-party-service:8080
       <<: *feature-flag-service-env
-      WORK_DELAY: 300
-      WORK_RATE: 900
+      WORK_DELAY: 30
+      WORK_RATE: 30
 
   third-party-service:
     <<: *default-service
-    image: ${REGISTRY}/third-party-service:${TAG}
+    build: src/third-party-service
+    image: third-party-service:${BUILD_NUMBER}
+    ports:
+      - 8093:8080
     environment:
       <<: *feature-flag-service-env
       PROXY_PREFIX: third-party-service
       CREDIT_CARD_ORDER_SERVICE_HOSTANDPORT: credit-card-order-service:8080
-      COURIER_DELAY: 400
-      COURIER_RATE: 900
-      MANUFACTURE_DELAY: 500
-      MANUFACTURE_RATE: 900
+      COURIER_DELAY: 10
+      COURIER_RATE: 10
+      MANUFACTURE_DELAY: 10
+      MANUFACTURE_RATE: 10
+
+  feature-flag-service:
+    <<: *default-service
+    build: src/feature-flag-service
+    image: feature-flag-service:${BUILD_NUMBER}
+    ports:
+      - 8094:8080
+    environment:
+      PROXY_PREFIX: feature-flag-service
 
   aggregatorservice_1:
     <<: *default-aggregator-service
+    build: src/aggregatorservice
+    image: aggregatorservice_1:${BUILD_NUMBER}
     environment:
       <<: *default-aggregator-service-env
       PLATFORM: dynatestsieger.at
@@ -208,42 +250,3 @@ services:
       LIGHT_PACKAGE_PROBABILITY: 0.3
       PRO_PACKAGE_PROBABILITY: 0.1
 
-  aggregatorservice_2:
-    <<: *default-aggregator-service
-    environment:
-      <<: *default-aggregator-service-env
-      PLATFORM: tradeCom.co.uk
-      STARTER_PACKAGE_PROBABILITY: 0.8
-      LIGHT_PACKAGE_PROBABILITY: 0.2
-      PRO_PACKAGE_PROBABILITY: 0
-
-  aggregatorservice_3:
-    <<: *default-aggregator-service
-    environment:
-      <<: *default-aggregator-service-env
-      PLATFORM: CryptoTrading.com
-      FILTER: '["Crypto"]'
-      MAXFEE: 0
-      STARTER_PACKAGE_PROBABILITY: 0.5
-      LIGHT_PACKAGE_PROBABILITY: 0.4
-      PRO_PACKAGE_PROBABILITY: 0.1
-
-  aggregatorservice_4:
-    <<: *default-aggregator-service
-    environment:
-      <<: *default-aggregator-service-env
-      PLATFORM: CheapTrading.mi
-      MAXFEE: 0
-      STARTER_PACKAGE_PROBABILITY: 1
-      LIGHT_PACKAGE_PROBABILITY: 0
-      PRO_PACKAGE_PROBABILITY: 0
-
-  aggregatorservice_5:
-    <<: *default-aggregator-service
-    environment:
-      <<: *default-aggregator-service-env
-      PLATFORM: Stratton-oakmount.com
-      FILTER: '["Shares"]'
-      STARTER_PACKAGE_PROBABILITY: 0
-      LIGHT_PACKAGE_PROBABILITY: 0.1
-      PRO_PACKAGE_PROBABILITY: 0.9

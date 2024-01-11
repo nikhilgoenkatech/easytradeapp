@@ -9,9 +9,9 @@ WORKDIR /app
 
 COPY [".", "."]
 
-RUN yarn install \
+#RUN yarn install --network-timeout 120000 \
     # && yarn run build-test \
-    && yarn run build
+RUN yarn run build
 
 FROM node:18.18.2-bullseye-slim as serve
 
