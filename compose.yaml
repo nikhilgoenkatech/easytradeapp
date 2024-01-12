@@ -247,24 +247,6 @@ services:
       DT_TAGS: Environment=${STAGE} Service=frontendreverseproxy 
       DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
-  loadgen:
-    <<: *default-service
-    build: src/loadgen
-    image: loadgen:${BUILD_NUMBER}
-    container_name: loadgen 
-    depends_on:
-      - frontendreverseproxy
-    networks:
-      - mynetwork      
-    environment:
-      EASYTRADE_URL: http://frontendreverseproxy
-      DT_CLUSTER_ID: loadgen 
-      JOB_NAME: ${JOB_NAME}
-      RELEASE_VERSION: ${BUILD_NUMBER}
-      RELEASE_STAGE: ${STAGE}
-      DT_TAGS: Environment=${STAGE} Service=loadgen 
-      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
-
   offerservice:
     <<: *default-service
     build: src/offerservice
