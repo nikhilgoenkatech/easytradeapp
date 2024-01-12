@@ -25,6 +25,7 @@ services:
     <<: *default-service
     build: src/db
     image: db:${BUILD_NUMBER}
+    container_name: default-service
     ports:
       - 1433:1433
     environment:
@@ -35,11 +36,13 @@ services:
       RELEASE_STAGE: ${STAGE}
       DT_TAGS: Environment=${STAGE}
       Service: default-service 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   contentcreator:
     <<: *default-service
     build: src/contentcreator
     image: contentcreator:${BUILD_NUMBER}
+    container_name: contentcreator 
     depends_on:
       - db
     environment:
@@ -49,12 +52,14 @@ services:
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
       DT_TAGS: Environment=${STAGE}
-      Service: Sample-NodeJs-Service
+      Service: contentcreator 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   manager:
     <<: *default-service
     build: src/manager/easyTradeManager
     image: manager:${BUILD_NUMBER}
+    container_name: manager 
     depends_on:
       - db
     ports:
@@ -66,11 +71,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: manager 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   pricing-service:
     <<: *default-service
     build: src/pricing-service
     image: pricing-service:${BUILD_NUMBER}
+    container_name: pricing-service 
     depends_on:
       - db
       - rabbitmq
@@ -87,11 +96,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: pricing-service 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   broker-service:
     <<: *default-service
     build: src/broker-service
     image: broker-service:${BUILD_NUMBER}
+    container_name: broker-service 
     ports:
       - 8084:80
     depends_on:
@@ -110,11 +123,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: broker-service 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   rabbitmq:
     <<: *default-service
     build: src/rabbitmq
     image: rabbitmq:${BUILD_NUMBER}
+    container_name: rabbitmq 
     ports:
       - 8082:15672
     environment:    
@@ -122,11 +139,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: rabbitmq 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   calculationservice:
     <<: *default-service
     build: src/calculationservice
     image: calcuationservice:${BUILD_NUMBER}
+    container_name: calcuationservice 
     depends_on:
       - rabbitmq
     environment:    
@@ -134,6 +155,9 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: calculationservice 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   frontend:
     <<: *default-service
@@ -147,6 +171,7 @@ services:
     #   - accountservice
     #   - credit-card-order-service
     image: frontend:${BUILD_NUMBER}
+    container_name: frontend 
     ports:
       - 8092:3000
     volumes:
@@ -156,11 +181,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: frontend 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   loginservice:
     <<: *default-service
     build: src/loginservice/easyTradeLoginService
     image: loginservice:${BUILD_NUMBER}
+    container_name: loginservice 
     environment:
       MSSQL_CONNECTIONSTRING: *dotnet-connection-string
       PROXY_PREFIX: loginservice
@@ -168,6 +197,9 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: loginservice 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
     depends_on:
       - db
     ports:
@@ -177,6 +209,7 @@ services:
     <<: *default-service
     build: src/frontendreverseproxy
     image: frontendreverseproxy:${BUILD_NUMBER}
+    container_name: frontendreverseproxy 
     depends_on:
       - broker-service
       - frontend
@@ -195,11 +228,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: frontendreverseproxy 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   loadgen:
     <<: *default-service
     build: src/loadgen
     image: loadgen:${BUILD_NUMBER}
+    container_name: loadgen 
     depends_on:
       - frontendreverseproxy
     environment:
@@ -208,11 +245,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: loadgen 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   offerservice:
     <<: *default-service
     build: src/offerservice
     image: offerservice:${BUILD_NUMBER}
+    container_name: offerservice 
     depends_on:
       - loginservice
       - manager
@@ -229,11 +270,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: loginservice 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   accountservice:
     <<: *default-service
     build: src/accountservice
     image: accountservice:${BUILD_NUMBER}
+    container_name: accountservice 
     depends_on:
       - manager
     ports:
@@ -245,11 +290,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: accountservice 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   engine:
     <<: *default-service
     build: src/engine
     image: engine:${BUILD_NUMBER}
+    container_name: engine 
     depends_on:
       - broker-service
     ports:
@@ -261,11 +310,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: broker-service 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   credit-card-order-service:
     <<: *default-service
     build: src/credit-card-order-service
     image: credit-card-order-service:${BUILD_NUMBER}
+    container_name: credit-card-order-service 
     depends_on:
       - db
       - third-party-service
@@ -282,11 +335,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: credit-card-order-service 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   third-party-service:
     <<: *default-service
     build: src/third-party-service
     image: third-party-service:${BUILD_NUMBER}
+    container_name: third-party-service 
     ports:
       - 8093:8080
     environment:
@@ -301,11 +358,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: third-party-service
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   feature-flag-service:
     <<: *default-service
     build: src/feature-flag-service
     image: feature-flag-service:${BUILD_NUMBER}
+    container_name: feature-flag-service 
     ports:
       - 8094:8080
     environment:
@@ -314,11 +375,15 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: feature-flag-service 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
   aggregatorservice_1:
     <<: *default-aggregator-service
     build: src/aggregatorservice
     image: aggregatorservice_1:${BUILD_NUMBER}
+    container_name: aggregatorservice_1 
     environment:
       <<: *default-aggregator-service-env
       PLATFORM: dynatestsieger.at
@@ -329,4 +394,7 @@ services:
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
+      DT_TAGS: Environment=${STAGE}
+      Service: aggregatorservice_1 
+      DT_CUSTOM_PROP: ENVIRONMENT=${STAGE} JOB_NAME=${JOB_NAME} BUILD_NUMBER=${BUILD_NUMBER}
 
