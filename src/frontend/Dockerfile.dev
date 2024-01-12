@@ -11,6 +11,6 @@ COPY ["*.json", "yarn.lock", "./"]
 RUN yarn install --network-timeout 100000
 
 # COPY ["public/", "./public"]
-COPY ["vite.config.ts", "index.html", "env.ts", ".env.*", "./"]
+COPY ["vite.config.ts", "index.html", "env.ts", ".env.*", "./src"]
 
 CMD ["yarn", "run", "dev", "--host", "-d"]
