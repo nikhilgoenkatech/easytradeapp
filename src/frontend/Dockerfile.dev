@@ -2,7 +2,7 @@ FROM node:18.18.2-bullseye
 
 LABEL ENV="DEV"
 
-WORKDIR /app/src
+WORKDIR /app/
 
 COPY ["*.json", "yarn.lock", "./"]
 
