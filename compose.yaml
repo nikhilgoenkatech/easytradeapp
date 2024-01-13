@@ -187,7 +187,8 @@ services:
     ports:
       - 8092:3000
     volumes:
-      - ./src/frontend/src:/app/src:ro
+      - ${WORKSPACE:-./src/frontend/src}:/app/src:ro
+            #- ./src/frontend/src:/app/src:ro
     networks:
       - mynetwork      
     environment:    
