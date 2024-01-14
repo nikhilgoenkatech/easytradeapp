@@ -175,6 +175,8 @@ def create_slo(DT_URL, DT_TOKEN):
 
     #Create Service SLOs
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(RSP_PAYLOAD)))
+    print(populate_data.status_code)
+    print(popoulate_data.text)
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(FAILURE_PAYLOAD)))
     
     #Create Database SLOs
