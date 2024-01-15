@@ -38,7 +38,6 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
-    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   } 
   #Failure Rate SLO definition  
@@ -56,7 +55,6 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
-    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   }
 
@@ -76,7 +74,6 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
-    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   } 
   #Failure Rate SLO definition  
@@ -94,7 +91,6 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
-    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   }
 
@@ -113,7 +109,6 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
-    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   }
   
@@ -132,7 +127,6 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
-    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   }
 
@@ -151,7 +145,6 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
-    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   }
 
@@ -170,7 +163,6 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
-    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   }
 
@@ -183,21 +175,48 @@ def create_slo(DT_URL, DT_TOKEN):
 
     #Create Service SLOs
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(RSP_PAYLOAD)))
+    name=$3 + "Performance test failed requests"
+    print(name)
     print(populate_data.status_code)
     print(populate_data.text)
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(FAILURE_PAYLOAD)))
+    print("Failure Payload)
+    print(populate_data.status_code)
+    print(populate_data.text)
     
     #Create Database SLOs
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(DB_RSP_PAYLOAD)))
+    print("DB_RSP Payload)
+    print(populate_data.status_code)
+    print(populate_data.text)
+    
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(DB_FAILURE_PAYLOAD)))
+    print("DB_FAIL Payload)
+    print(populate_data.status_code)
+    print(populate_data.text)
     
     #Create Application SLOs
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(APP_RSP_PAYLOAD)))
+    print("APP_RSP Payload)
+    print(populate_data.status_code)
+    print(populate_data.text)
+    
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(APP_FAILURE_PAYLOAD)))
+    print("APP_FAILURE Payload)
+    print(populate_data.status_code)
+    print(populate_data.text)
     
     #Create Performance tests SLOs
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(PERFTEST_RSP_PAYLOAD)))
+    print("PERFTEST RSP Payload)
+    print(populate_data.status_code)
+    print(populate_data.text)
+
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(PERFTEST_FAILURE_PAYLOAD)))
+    print("PERFTEST FAIL Payload)
+    print(populate_data.status_code)
+    print(populate_data.text)
+    
     if populate_data.status_code == 401:
       msg = "Auth Error"
 
