@@ -38,6 +38,7 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
+    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   } 
   #Failure Rate SLO definition  
@@ -55,6 +56,7 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
+    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   }
 
@@ -74,6 +76,7 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
+    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   } 
   #Failure Rate SLO definition  
@@ -91,6 +94,7 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
+    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   }
 
@@ -109,6 +113,7 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
+    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   }
   
@@ -127,6 +132,7 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
+    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   }
 
@@ -145,6 +151,7 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
+    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   }
 
@@ -163,6 +170,7 @@ def create_slo(DT_URL, DT_TOKEN):
       "fastBurnThreshold": 1.5,
       "burnRateVisualizationEnabled": "true"
     },
+    "dt.event.deployment.release_product": $3,
     "timeframe": "-1d"
   }
 
