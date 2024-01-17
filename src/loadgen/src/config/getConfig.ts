@@ -3,7 +3,7 @@ import { Config, HEADLESS_MODES } from "./types"
 
 export function getConfig(): Config {
     return {
-        concurrent_visits: EnvConfig.getNumber("CONCURRENCY", 5),
+        concurrent_visits: EnvConfig.getNumber("CONCURRENCY", 100),
         concurrent_browsers: EnvConfig.getNumber("BROWSERS", 1),
         browserTimeToLiveMinutes: EnvConfig.getNumber(
             "BROWSER_TTL_MINUTES",

@@ -1,119 +1,101 @@
 node {
     environment {
         APP_NAME = "SampleNodeJs"
-        STAGING = "Staging"
-        PRODUCTION = "Production"
+        STAGE = "Staging"
         execution_id = 0
+        WORKSPACE = pwd()
     } 
 
-    stage('Checkout') {
+
+    stage('Build') {
         // Checkout our application source code
         git url: 'https://github.com/nikhilgoenkatech/easytradeapp.git',
             branch: 'main'
-
-    }
-
-    stage('Build') {
+        
         // Lets build our docker image
         dir ('easytradeapp') {
-            sh 'docker-compose build'
+            withEnv(['STAGE=Staging']) {
+              //sh 'docker-compose build --no-cache frontend'
+              sh 'docker-compose build frontend'
+            }
         }
         echo "Completed Build phase"
     }
     
-    stage('CleanStaging') {
-        // The cleanup script makes sure no previous docker staging containers run
-        sh 'docker ps -f name=SampleOnlineBankStaging -q | xargs --no-run-if-empty docker container stop'
-        sh 'docker container ls -a -fname=SampleOnlineBankStaging -q | xargs -r docker container rm'
-    }
-    
     stage('DeployStaging') {
-        // Lets deploy the previously build container
-        def app = docker.image("sample-bankapp-service:${BUILD_NUMBER}")
-        //app.run("--network mynetwork --name SampleOnlineBankStaging -p 3000:3000 -v StagingVol " +
-        app.run("--network mynetwork --name SampleOnlineBankStaging -p 3000:3000 " +
-                "-e 'DT_CLUSTER_ID=SampleOnlineBankStaging' " + 
-                "-e 'DT_TAGS=Environment=Staging Service=Sample-NodeJs-Service' " +
-                "-e 'DT_CUSTOM_PROP=ENVIRONMENT=Staging JOB_NAME=${JOB_NAME} " + 
-                    "BUILD_TAG=${BUILD_TAG} BUILD_NUMBER=${BUIlD_NUMBER}' " +
-                "-e 'RELEASE_VERSION=${BUILD_NUMBER}' " + 
-                "-e 'RELEASE_STAGE=Staging' ")
-
+        // The cleanup script makes sure no previous docker staging containers run
+        //sh 'docker-compose down frontend'
+        
+        echo "Executing DOCKER-COMPOSE for frontend service "
+        withEnv(['STAGE=Staging']) {
+          sh ('docker-compose up -d frontend')
+        }
         dir ('dynatrace-scripts') {
             // push a deployment event on the host with the tag JenkinsInstance created using automatic tagging rule
             sh './pushdeployment.sh HOST JenkinsInstance ' +
                '${BUILD_TAG} ${BUILD_NUMBER} ${JOB_NAME} ' + 
-               'Staging SampleOnlineBankStaging'
+               'Staging easytrade-frontendStaging templates/job_template/rollback_staging_easytrade-frontend/ easytrade-frontendStaging'
             
             sh './pushdeployment.sh PROCESS_GROUP_INSTANCE [Environment]Environment:Staging ' +
                '${BUILD_TAG} ${BUILD_NUMBER} ${JOB_NAME} ' + 
-               'Staging SampleOnlineBankStaging templates/job_template/rollback_staging_samplebank/'
+               'Staging easytrade-frontendStaging templates/job_template/rollback_staging_easytrade-frontend/'
                         
             // Create a on-demand synthetic monitor so as to check the UI functionlity
             sh './synthetic-monitor.sh Staging '+  '${JOB_NAME} ${BUILD_NUMBER}' + ' 3000'
             
             // Create SLOs for the staging environment
-            sh "python3 create_slo.py ${DT_URL} ${DT_TOKEN} SampleOnlineBankStaging DockerService staging ${BUILD_NUMBER}"
+            sh "python3 create_slo.py ${DT_URL} ${DT_TOKEN} easytrade-frontendStaging DockerService staging ${BUILD_NUMBER}"
             
             // Pull the SLOs id and create a sample dashboard for the staging stage
-            sh "python3 populate_slo.py ${DT_URL} ${DT_TOKEN} SampleOnlineBankStaging ${JOB_NAME} staging ${BUILD_NUMBER} DockerService"
+            sh "python3 populate_slo.py ${DT_URL} ${DT_TOKEN} easytrade-frontendStaging ${JOB_NAME} staging ${BUILD_NUMBER} DockerService"
         }
     }
     
     stage('Testing') {
-        // lets push an event to dynatrace that indicates that we START a load test
         dir ('dynatrace-scripts') {
-            sh './pushevent.sh SERVICE DockerService SampleOnlineBankStaging ' +
-               '"Starting a Load Test as part of Staging" ${JOB_NAME} "Starting a Load Test as part of Staging"' + 
+            sh './pushevent.sh SERVICE DockerService easytrade-frontendStaging ' +
+               '"Easytrade load test initiated for staging" ${JOB_NAME} "Easytrade starting a load test as part of Staging"' + 
                ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT} ${BUILD_NUMBER}'
         }
+        
+        // lets run some test scripts
+        dir ('load-tests/logintests') {
+            sh "/home/apache-jmeter-5.2.1/bin/jmeter -n -t /var/jenkins_home/workspace/sre-easytrade/load-tests/logintests/JMeter.jmx -l output.jtl"
+            archiveArtifacts artifacts: 'loadtest.log', fingerprint: true
+        }
+        
         dir('dynatrace-scripts') {
             // Trigger the on-demand synthetic monitor as part of the Testing cycle
             env.execution_id = sh(script: 'python3 trigger_syn_monitor.py ${DT_URL} ${DT_TOKEN} Staging ${BUILD_NUMBER}', returnStatus: true)
 
         }
         
-        // lets run some test scripts
-        dir ('sample-bank-app-service-tests') {
-            // start load test - simulating traffic for Staging enviornment on port 3000 
-
-            sh "rm -f stagingloadtest.log stagingloadtestcontrol.txt"
-            sh "python3 smoke-test.py 3000 200 ${BUILD_NUMBER} stagingloadtest.log ${PUBLIC_IP} SampleOnlineBankStaging"
-            archiveArtifacts artifacts: 'stagingloadtest.log', fingerprint: true
-        }
-
         // lets push an event to dynatrace that indicates that we STOP a load test
         dir ('dynatrace-scripts') {
-            sh './pushevent.sh SERVICE DockerService SampleOnlineBankStaging '+
-               '"Stopping Load Test that started as part of the Staging." ${JOB_NAME} "Stopping a Load Test as part of the Testing stage" '+
-               '${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT} ${BUILD_NUMBER}'
-        }
-
-        // lets push an event to dynatrace that indicates that we START a sanity test
-        dir ('dynatrace-scripts') {
-            sh './pushevent.sh SERVICE DockerService SampleOnlineBankStaging ' +
-               '"STARTING Sanity-Test" ${JOB_NAME} "Starting Sanity-test of the Testing stage"' + 
-               ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT} ${BUILD_NUMBER}'
-        }
-        
-        // lets run some test scripts
-        dir ('sample-bank-app-service-tests') {
-            // start load test - simulating traffic for Staging enviornment on port 3000 
-
-            sh "rm -f stagingloadtest.log stagingloadtestcontrol.txt"
-            sh "python3 sanity-test.py 3000 10 ${BUILD_NUMBER} stagingsanitytest.log ${PUBLIC_IP} SampleOnlineBankStaging"
-            archiveArtifacts artifacts: 'stagingsanitytest.log', fingerprint: true
-        }
-
-        // lets push an event to dynatrace that indicates that we STOP a load test
-        dir ('dynatrace-scripts') {
-            sh './pushevent.sh SERVICE DockerService SampleOnlineBankStaging '+
-               '"STOPPING Sanity Test" ${JOB_NAME} "Stopping Sanity-test of the Testing stage" '+
+            sh './pushevent.sh SERVICE DockerService easytrade-frontendStaging '+
+               '"Easytrade load test stopped for staging." ${JOB_NAME} "Stopping a Load Test as part of the Testing stage" '+
                '${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT} ${BUILD_NUMBER}'
         }
     }
     
     stage('ValidateStaging') {
+        dir ('dynatrace-scripts') {
+            sh './pushevent.sh SERVICE DockerService easytrade-frontendStaging ' +
+               '"Easytrade integration test initiated for staging" ${JOB_NAME} "Easytrade starting a load test as part of Staging"' +
+               ' ${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT} ${BUILD_NUMBER}'
+        }
+
+        // lets run some test scripts
+        dir ('load-tests/logintests') {
+            sh 'docker-compose -f '
+        }
+
+        dir ('dynatrace-scripts') {
+            sh './pushevent.sh SERVICE DockerService easytrade-frontendStaging '+
+               '"Easytrade integration test stopped for staging." ${JOB_NAME} "Stopping a Load Test as part of the Testing stage" '+
+               '${JENKINS_URL} ${JOB_URL} ${BUILD_URL} ${GIT_COMMIT} ${BUILD_NUMBER}'
+        }
+
         script {
             def startTime = System.currentTimeMillis()
             while (1) {        
@@ -122,7 +104,7 @@ node {
                     echo 'Received the input from user "$(env.PROMOTION_DECISION)"'
                     break
                 } catch (Exception e) {
-                    sh 'echo "SRE-Guardian has disapproved the build, will not promote to production."' 
+                    sh 'echo "SRG-Guardian has disapproved the build, will not promote to production."' 
                     error("SRE-Guardian has disapproved the build, will not promote to production")
                     currentBuild.result = 'ABORTED'
                 }                     

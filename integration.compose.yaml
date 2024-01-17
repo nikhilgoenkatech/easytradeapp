@@ -1,0 +1,17 @@
+networks:
+  mynetwork:
+    external: true
+
+services:
+  loadgen:
+    build: src/loadgen
+    networks:
+      - mynetwork      
+    container_name: integrationtests 
+    image: integrationtests:${BUILD_NUMBER}
+    environment:
+      JOB_NAME: ${JOB_NAME}
+      RELEASE_VERSION: ${BUILD_NUMBER}
+      RELEASE_STAGE: ${STAGE}
+      DT_CLUSTER_ID: easytrade-integrationtests
+      EASYTRADE_URL: http://frontendreverseproxy
