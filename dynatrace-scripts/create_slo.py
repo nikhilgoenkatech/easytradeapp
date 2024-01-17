@@ -28,7 +28,7 @@ def create_slo(DT_URL, DT_TOKEN):
     "enabled": "true",
     "name": "$3 - Performance test Response Time SLO",
     "description": "Performance test Response Time SLO",
-    "metricName": "perftest_response_time_$5",
+    "metricName": "easytrade_perftest_response_time_$5",
     "metricExpression": "((builtin:service.response.time:filter(in(\"dt.entity.service\",entitySelector(\"type(SERVICE),tag($4:$3)\"))):avg:toUnit(MicroSecond,MilliSecond):partition(latency,value(good,lt(36.17))):splitBy():count:fold)/(builtin:service.response.time:filter(in(\"dt.entity.service\",entitySelector(\"type(SERVICE),tag($4:$3)\"))):avg:toUnit(MicroSecond,MilliSecond):splitBy():count:fold)*(100))",
     "evaluationType": "AGGREGATE",
     "filter": "type(\"SERVICE\"),tag(\"BuildVersion:$6\")",
@@ -45,7 +45,7 @@ def create_slo(DT_URL, DT_TOKEN):
     "enabled": "true",
     "name": "$3 - Performance test failed requests",
     "description": "Failure Rate",
-    "metricName": "perf_testfailure_rate_$5",
+    "metricName": "easytrade_perf_testfailure_rate_$5",
     "metricExpression":"(100)*(builtin:service.errors.total.successCount:filter(in(\"dt.entity.service\",entitySelector(\"type(SERVICE),tag($4:$3)\"))):splitBy())/(builtin:service.requestCount.total:filter(in(\"dt.entity.service\",entitySelector(\"type(SERVICE),tag($4:$3)\"))):splitBy())",
     "evaluationType": "AGGREGATE",
     "filter": "type(\"SERVICE\"),tag(\"BuildVersion:$6\")",
@@ -64,7 +64,7 @@ def create_slo(DT_URL, DT_TOKEN):
     "enabled": "true",
     "name": "$3 - Response Time SLO",
     "description": "Response Time SLO",
-    "metricName": "response_time_$5",
+    "metricName": "easytrade_response_time_$5",
     "metricExpression": "((builtin:service.response.time:filter(in(\"dt.entity.service\",entitySelector(\"type(SERVICE),tag($4:$3)\"))):avg:toUnit(MicroSecond,MilliSecond):partition(latency,value(good,lt(36.17))):splitBy():count:fold)/(builtin:service.response.time:filter(in(\"dt.entity.service\",entitySelector(\"type(SERVICE),tag($4:$3)\"))):avg:toUnit(MicroSecond,MilliSecond):splitBy():count:fold)*(100))",
     "evaluationType": "AGGREGATE",
     "filter": "type(\"SERVICE\")",
@@ -81,7 +81,7 @@ def create_slo(DT_URL, DT_TOKEN):
     "enabled": "true",
     "name": "$3 - Failure Rate",
     "description": "Failure Rate",
-    "metricName": "failure_rate_$5",
+    "metricName": "easytrade_failure_rate_$5",
     "metricExpression":"(100)*(builtin:service.errors.total.successCount:filter(in(\"dt.entity.service\",entitySelector(\"type(SERVICE),tag($4:$3)\"))):splitBy())/(builtin:service.requestCount.total:filter(in(\"dt.entity.service\",entitySelector(\"type(SERVICE),tag($4:$3)\"))):splitBy())",
     "evaluationType": "AGGREGATE",
     "filter": "type(\"SERVICE\")",
@@ -99,7 +99,7 @@ def create_slo(DT_URL, DT_TOKEN):
     "enabled": "true",
     "name": "$3 - DB Response Time SLO",
     "description": "Datbase Response Time SLO",
-    "metricName": "db_response_time_$5",
+    "metricName": "easytrade_db_response_time_$5",
     "metricExpression":"((builtin:service.response.time:filter(in(\"dt.entity.service\",entitySelector(\"type(~\"SERVICE~\")\"))):filter(in(\"dt.entity.service\",entitySelector(\"type(SERVICE),entityName.equals(~\"test~\")\"))):avg:toUnit(MicroSecond,MilliSecond):partition(latency,value(good,lt(36.17))):splitBy():count:fold)/(builtin:service.response.time:filter(in(\"dt.entity.service\",entitySelector(\"type(~\"SERVICE~\")\"))):filter(in(\"dt.entity.service\",entitySelector(\"type(SERVICE),entityName.equals(~\"test~\")\"))):avg:toUnit(MicroSecond,MilliSecond):splitBy():count:fold)*(100))",
     "evaluationType": "AGGREGATE",
     "filter": "type(\"SERVICE\")",
@@ -117,7 +117,7 @@ def create_slo(DT_URL, DT_TOKEN):
     "enabled": "true",
     "name": "$3 - Database Failure Rate",
     "description": "DB Failure Rate",
-    "metricName": "db_failure_rate_$5",
+    "metricName": "easytrade_db_failure_rate_$5",
     "metricExpression":"(100)*(builtin:service.errors.total.successCount:filter(in(\"dt.entity.service\",entitySelector(\"type(~\"SERVICE~\")\"))):filter(in(\"dt.entity.service\",entitySelector(\"type(SERVICE),entityName.equals(~\"test~\")\"))):splitBy())/(builtin:service.requestCount.total:filter(in(\"dt.entity.service\",entitySelector(\"type(~\"SERVICE~\")\"))):filter(in(\"dt.entity.service\",entitySelector(\"type(SERVICE),entityName.equals(~\"test~\")\"))):splitBy())",
     "evaluationType": "AGGREGATE",
     "filter": "type(\"SERVICE\")",
@@ -135,7 +135,7 @@ def create_slo(DT_URL, DT_TOKEN):
     "enabled": "true",
     "name": "$3 - App Response Time SLO",
     "description": "Application Response Time SLO",
-    "metricName": "app_response_time_$5",
+    "metricName": "easytrade_app_response_time_$5",
     "evaluationType": "AGGREGATE",
     "metricExpression":"(100)*((builtin:apps.web.actionCount.category:filter(in(\"dt.entity.application\",entitySelector(\"type(APPLICATION)\"))):filter(eq(\"Apdex category\",SATISFIED)):splitBy())/(builtin:apps.web.actionCount.category:filter(in(\"dt.entity.application\",entitySelector(\"type(APPLICATION)\"))):splitBy()))",
     "filter": "type(\"APPLICATION\")",
@@ -153,7 +153,7 @@ def create_slo(DT_URL, DT_TOKEN):
     "enabled": "true",
     "name": "$3 - App Failure Rate",
     "description": "App Failure Rate",
-    "metricName": "app_failure_rate_$5",
+    "metricName": "easytrade_app_failure_rate_$5",
     "metricExpression":"(100)*((builtin:apps.web.countOfErrorsDuringUserActions:filter(in(\"dt.entity.application\",entitySelector(\"type(APPLICATION)\"))))/(builtin:apps.web.actionCount.category:filter(in(\"dt.entity.application\",entitySelector(\"type(APPLICATION)\"))):splitBy()))",
     "evaluationType": "AGGREGATE",
     "filter": "type(\"APPLICATION\")",
@@ -175,47 +175,19 @@ def create_slo(DT_URL, DT_TOKEN):
 
     #Create Service SLOs
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(RSP_PAYLOAD)))
-    name=$3 + "Performance test failed requests"
-    print(name)
-    print(populate_data.status_code)
-    print(populate_data.text)
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(FAILURE_PAYLOAD)))
-    print("Failure Payload)
-    print(populate_data.status_code)
-    print(populate_data.text)
     
     #Create Database SLOs
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(DB_RSP_PAYLOAD)))
-    print("DB_RSP Payload)
-    print(populate_data.status_code)
-    print(populate_data.text)
-    
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(DB_FAILURE_PAYLOAD)))
-    print("DB_FAIL Payload)
-    print(populate_data.status_code)
-    print(populate_data.text)
     
     #Create Application SLOs
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(APP_RSP_PAYLOAD)))
-    print("APP_RSP Payload)
-    print(populate_data.status_code)
-    print(populate_data.text)
-    
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(APP_FAILURE_PAYLOAD)))
-    print("APP_FAILURE Payload)
-    print(populate_data.status_code)
-    print(populate_data.text)
     
     #Create Performance tests SLOs
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(PERFTEST_RSP_PAYLOAD)))
-    print("PERFTEST RSP Payload)
-    print(populate_data.status_code)
-    print(populate_data.text)
-
     populate_data = requests.post(query, headers = post_param, data = json.dumps(populate_payload(PERFTEST_FAILURE_PAYLOAD)))
-    print("PERFTEST FAIL Payload)
-    print(populate_data.status_code)
-    print(populate_data.text)
     
     if populate_data.status_code == 401:
       msg = "Auth Error"
