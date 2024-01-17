@@ -36,7 +36,7 @@ services:
       - mynetwork      
     environment:
       SA_PASSWORD: yourStrong(!)Password
-      DT_CLUSTER_ID: easytrade-default-service-${STAGE}
+      DT_CLUSTER_ID: easytrade-default-service
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -55,7 +55,7 @@ services:
       - mynetwork      
     environment:
       MSSQL_CONNECTIONSTRING: *java-connection-string
-      DT_CLUSTER_ID: easytrade-contentcreator${STAGE} 
+      DT_CLUSTER_ID: easytrade-contentcreator 
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -76,7 +76,7 @@ services:
     environment:
       MSSQL_CONNECTIONSTRING: *dotnet-connection-string
       PROXY_PREFIX: manager
-      DT_CLUSTER_ID: easytrade-manager${STAGE} 
+      DT_CLUSTER_ID: easytrade-manager
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -102,7 +102,7 @@ services:
       RABBITMQ_PASSWORD: passxxx
       RABBITMQ_QUEUE: Trade_Data_Raw
       PROXY_PREFIX: pricing-service
-      DT_CLUSTER_ID: easytrade-rabbitmq${STAGE}
+      DT_CLUSTER_ID: easytrade-rabbitmq
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -130,7 +130,7 @@ services:
       <<: *feature-flag-service-env
       PROXY_PREFIX: broker-service
       MSSQL_CONNECTIONSTRING: *dotnet-connection-string
-      DT_CLUSTER_ID: easytrade-broker-service-${STAGE} 
+      DT_CLUSTER_ID: easytrade-broker-service
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -147,7 +147,7 @@ services:
     networks:
       - mynetwork      
     environment:    
-      DT_CLUSTER_ID: easytrade-rabbitmq${STAGE} 
+      DT_CLUSTER_ID: easytrade-rabbitmq
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -164,7 +164,7 @@ services:
     networks:
       - mynetwork      
     environment:    
-      DT_CLUSTER_ID: easytrade-calculationservice${STAGE} 
+      DT_CLUSTER_ID: easytrade-calculationservice
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -192,7 +192,7 @@ services:
     networks:
       - mynetwork      
     environment:    
-      DT_CLUSTER_ID: easytrade-frontend${STAGE}
+      DT_CLUSTER_ID: easytrade-frontend-${STAGE}
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -207,7 +207,7 @@ services:
     environment:
       MSSQL_CONNECTIONSTRING: *dotnet-connection-string
       PROXY_PREFIX: loginservice
-      DT_CLUSTER_ID: easytrade-loginservice${STAGE} 
+      DT_CLUSTER_ID: easytrade-loginservice
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -241,7 +241,7 @@ services:
     ports:
       - 80:80
     environment:    
-      DT_CLUSTER_ID: easytrade-frontendreverseproxy${STAGE}
+      DT_CLUSTER_ID: easytrade-frontendreverseproxy
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -267,7 +267,7 @@ services:
       LOGIN_SERVICE_BASE_URL: loginservice
       MANAGER_BASE_URL: manager
       MANAGER_PORT: 80
-      DT_CLUSTER_ID: easytrade-offerservice${STAGE}
+      DT_CLUSTER_ID: easytrade-offerservice
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -288,7 +288,7 @@ services:
     environment:
       MANAGER_HOSTANDPORT: manager:80
       PROXY_PREFIX: accountservice
-      DT_CLUSTER_ID: easytrade-accountservice${STAGE} 
+      DT_CLUSTER_ID: easytrade-accountservice
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -309,7 +309,7 @@ services:
     environment:
       BROKER_HOSTANDPORT: broker-service:80
       PROXY_PREFIX: engine
-      DT_CLUSTER_ID: easytrade-engine${STAGE} 
+      DT_CLUSTER_ID: easytrade-engine
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -335,7 +335,7 @@ services:
       <<: *feature-flag-service-env
       WORK_DELAY: 30
       WORK_RATE: 30
-      DT_CLUSTER_ID: easytrade-credit-card-order-service-${STAGE} 
+      DT_CLUSTER_ID: easytrade-credit-card-order-service
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -357,7 +357,7 @@ services:
       COURIER_RATE: 10
       MANUFACTURE_DELAY: 10
       MANUFACTURE_RATE: 10
-      DT_CLUSTER_ID: easytrade-third-party-service-${STAGE}
+      DT_CLUSTER_ID: easytrade-third-party-service
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -375,7 +375,7 @@ services:
       - 8094:8080
     environment:
       PROXY_PREFIX: feature-flag-service
-      DT_CLUSTER_ID: easytrade-feature-flag-service-${STAGE}
+      DT_CLUSTER_ID: easytrade-feature-flag-service
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
@@ -395,7 +395,7 @@ services:
       STARTER_PACKAGE_PROBABILITY: 0.6
       LIGHT_PACKAGE_PROBABILITY: 0.3
       PRO_PACKAGE_PROBABILITY: 0.1
-      DT_CLUSTER_ID: easytrade-aggregatorservice_1-${STAGE} 
+      DT_CLUSTER_ID: easytrade-aggregatorservice_1
       JOB_NAME: ${JOB_NAME}
       RELEASE_VERSION: ${BUILD_NUMBER}
       RELEASE_STAGE: ${STAGE}
