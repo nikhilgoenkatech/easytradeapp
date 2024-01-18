@@ -20,13 +20,13 @@
 
 PAYLOAD=$(cat <<EOF
 {  "eventType": "CUSTOM_ANNOTATION",
-  "entitySelector": "type($1), tag($2:$3)",
-  "title":"\"$4\"",
+  "entitySelector": "type($1), tag($2:$3,$4:$5)",
+  "title":"\"$6\"",
   "properties" : {
-  "JenkinsJobName" : "$5",
-  "BuildUrl" : "$7",
-  "Description": "$6",
-  "BuildVersion":"${10}",
+  "JenkinsJobName" : "$7",
+  "BuildUrl" : "$9",
+  "Description": "$8",
+  "BuildVersion":"${12}",
   "SRGTimestamp":"$(date --utc +%FT%T.000000000Z)"
   }
 }
