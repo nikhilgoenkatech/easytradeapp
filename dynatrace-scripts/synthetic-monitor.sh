@@ -23,7 +23,7 @@ PAYLOAD=$(cat <<EOF
       {
         "type": "navigate",
         "description": "Loading of \"http://${PUBLIC_IP}:$4\"",
-        "url": "http://${PUBLIC_IP}:$4"
+        "url": "http://${PUBLIC_IP}:$4",
         "wait": {
           "waitFor": "page_complete"
         }
