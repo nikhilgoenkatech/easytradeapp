@@ -303,7 +303,7 @@ PAYLOAD=$(cat <<EOF
   },
   "events": [
     {
-      "name": "Loading of \"http://${PUBLIC_IP}"",
+      "name": "Loading of \"http://${PUBLIC_IP}\"",
       "sequenceNumber": 1
     },
     {
