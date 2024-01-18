@@ -3,7 +3,7 @@ import { Config, HEADLESS_MODES } from "./types"
 
 export function getConfig(): Config {
     return {
-        concurrent_visits: EnvConfig.getNumber("CONCURRENCY", 100),
+        concurrent_visits: EnvConfig.getNumber("CONCURRENCY", 10),
         concurrent_browsers: EnvConfig.getNumber("BROWSERS", 1),
         browserTimeToLiveMinutes: EnvConfig.getNumber(
             "BROWSER_TTL_MINUTES",
@@ -53,7 +53,7 @@ export function getConfig(): Config {
             ),
             deposit_and_long_buy_timeout: EnvConfig.getNumber(
                 "DEPOSIT_AND_LONG_BUY_TIMEOUT_WEIGHT",
-                1
+                1||10
             ),
             long_sell_error: EnvConfig.getNumber("LONG_SELL_ERROR_WEIGHT", 1),
             long_sell_success: EnvConfig.getNumber(
@@ -62,7 +62,7 @@ export function getConfig(): Config {
             ),
             long_sell_timeout: EnvConfig.getNumber(
                 "LONG_SELL_TIMEOUT_WEIGHT",
-                1
+                1 || 10
             ),
             sell_and_withdraw_success: EnvConfig.getNumber(
                 "SELL_AND_WITHDRAW_SUCCESS_WEIGHT",
