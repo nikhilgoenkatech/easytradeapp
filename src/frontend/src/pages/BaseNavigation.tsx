@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom"
-import { useAuth } from "../contexts/AuthContext/context"
+import { useAuth } from "../contexts/AuthContext/contexts"
 
 export default function BaseNavigation() {
     const { isLoggedIn } = useAuth()
