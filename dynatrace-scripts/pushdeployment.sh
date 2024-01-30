@@ -30,7 +30,8 @@ PAYLOAD=$(cat <<EOF
     "dt.event.deployment.project": "$5",
     "dt.event.deployment.remediation_action_link": "$8",
     "dt.event.deployment.version": "$4",
-    "dt.event.is_rootcause_relevant" : true
+    "dt.event.is_rootcause_relevant" : true,
+    "event.owner": "easytrade-frontend"
    }
 }
 EOF
