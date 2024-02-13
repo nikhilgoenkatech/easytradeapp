@@ -14,7 +14,7 @@ EOF
 echo "Ordering credit card with body: [$body]"
 
 response=$(curl -X 'POST' \
-  'http://$1/credit-card-order-service/v1/orders' \
+  "http://$1/credit-card-order-service/v1/orders" \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d "$body")
