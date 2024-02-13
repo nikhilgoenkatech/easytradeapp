@@ -1,5 +1,17 @@
 #!/bin/bash
 
+echo "Deleting existing credit card for account -> "
+# Delete any existing credit card for account
+delete_response=$(curl -X 'DELETE' \
+    "http://$1/credit-card-order-service/v1/orders/3" \
+    -H 'accept: application/json')
+
+  if [ $? -eq 0 ]; then
+    echo "Order deleted successfully."
+  else
+    echo "Error: Failed to delete order."
+  fi
+
 body=$(cat <<EOF
 {
   "accountId": 3,
