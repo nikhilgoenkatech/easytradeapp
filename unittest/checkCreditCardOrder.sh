@@ -3,7 +3,7 @@
 echo "Checking latest credit card order status"
 
 response=$(curl -X 'GET' \
-  'http://$1/credit-card-order-service/v1/orders/3/status/latest' \
+  "http://$1/credit-card-order-service/v1/orders/3/status/latest" \
   -H 'accept: application/json')
 
 echo "Response: [$response]"
