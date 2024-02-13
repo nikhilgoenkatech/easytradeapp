@@ -13,7 +13,9 @@ status=$(echo "$response" | grep -o '"status": *"[^"]*"' | awk -F'"' '{print $4}
 echo "Latest card status: [$status]"
 
 if [ "$status" == "card_delivered" ]; then
+  echo "Status -> [$status]. Returning 0"
   exit 0
 else
+  echo "Status -> [$status]. Returning 1"
   exit 1
 fi
