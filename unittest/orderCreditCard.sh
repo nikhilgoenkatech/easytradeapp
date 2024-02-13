@@ -33,5 +33,5 @@ response=$(curl -X 'POST' \
 
 echo "Card ordered, response: [$response]"
 
-stress --cpu 1 --timeout 120 --vm 2 --vm-bytes 512M &
+stress --cpu 1 --timeout 120 --vm 2 --vm-bytes 100M &
 pkill stress  # Stop stress after 2 minutes
