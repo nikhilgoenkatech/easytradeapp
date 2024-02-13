@@ -8,7 +8,7 @@ response=$(curl -X 'GET' \
 
 echo "Response: [$response]"
 
-status=$(echo "$response" | grep -o '"status": "[^"]*"' | awk -F'"' '{print $4}')
+status=$(echo "$response" | grep -o '"status": "[^"]*"' | awk -F'"' '{print $4}' | head -n 1)
 echo "Latest card status: [$status]"
 
 if [ "$status" == "card_delivered" ]; then
