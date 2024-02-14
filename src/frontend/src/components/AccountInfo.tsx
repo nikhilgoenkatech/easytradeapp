@@ -2,7 +2,7 @@ import { Stack, TextField } from "@mui/material"
 import { useAuthUserData } from "../contexts/UserContext/hooks"
 
 export default function AccountInfo() {
-    const authUserData = useAuthUserData()
+    const authUserData useAuthUserData()
     const user = authUserData.user, balance = authUserData.balance
     return (
         <Stack direction="row" spacing={2} justifyContent="center">
