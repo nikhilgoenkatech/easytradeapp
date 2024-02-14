@@ -175,7 +175,7 @@ services:
     <<: *default-service
     build:
       context: src/frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     # depends_on:
     #   - broker-service
     #   - loginservice
