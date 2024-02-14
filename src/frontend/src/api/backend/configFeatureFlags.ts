@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios"
 
-export type FeatureFlag = {
+export type FeatureFlag {
     id: string
     enabled: boolean
     name: string
