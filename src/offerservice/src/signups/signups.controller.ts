@@ -17,7 +17,7 @@ export async function signUpNewUser(
         const res = await superagent
             //.post("http://localhost:8086/api/Accounts/CreateNewAccount")
             //.post("http://{IP_ADDRESS}:8086/api/Accounts/CreateNewAccount")
-            .post(url.toString())
+            .post(toString())
             .send(req.body)
 
         logger.info(`User signup response [${JSON.stringify(res)}]`)
