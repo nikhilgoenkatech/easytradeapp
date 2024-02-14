@@ -17,7 +17,7 @@ void messageReceive(std::string tmp){
 
     // Dynatrace SDK
     /* create tracer */
-    onesdk_tracer_handle_t const tracer onesdk_customservicetracer_create(
+    onesdk_tracer_handle_t const tracer = onesdk_customservicetracer_create(
         onesdk_asciistr("ComputeFunctionReturns"),
         onesdk_asciistr("PriceAnalysisComputation"));
 
