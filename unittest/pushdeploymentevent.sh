@@ -7,7 +7,7 @@ PAYLOAD=$(cat <<EOF
   "BuildUrl" : "$9",
   "Description": "$8",
   "BuildVersion":"${12}",
-  "StartTimestamp":"${12}",
+  "StartTimestamp":"${13}",
   "EndTimestamp":"$(date --utc +%FT%T.000000000Z)",
   "owner": "easytrade-frontend"
   }
